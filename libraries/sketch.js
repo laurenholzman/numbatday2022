@@ -10,11 +10,11 @@ var places = [[350,197],[196,262]];
 var descriptions = ['This dude is really having a good time.','It is in fact her 22nd birthday.'];
 
 function preload() {
-  img1 = loadImage('IMG_6112.PNG');
-  img4 = loadImage('IMG_7607.jpg');
-    img3 = loadImage('IMG_9696.jpg');
+  img1 = loadImage('libraries/IMG_6112.PNG');
+  img4 = loadImage('libraries/IMG_7607.jpg');
+    img3 = loadImage('libraries/IMG_9696.jpg');
 
-    img2 = loadImage('numbat.jpg');
+    img2 = loadImage('libraries/numbat.jpg');
 
 
   
