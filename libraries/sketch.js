@@ -1,7 +1,7 @@
 let img;
 let img2;
 var value = 0;
-var dim = 600;
+var dim = 1000;
 var value2 = 0;
 var rad = 30;
 let current;
@@ -23,7 +23,7 @@ function preload() {
 
 }
 function setup() {
-  createCanvas(dim,dim);
+  createCanvas(dim,2*dim);
   imageMode(CENTER);
 }
  function keyPressed() {
