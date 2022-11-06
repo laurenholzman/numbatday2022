@@ -10,11 +10,11 @@ let current;
 //var descriptions = ['A muddy field that is redeemed by the adjacent dog park.','The best place for cheap coffee.','The best part for dangerously fast sledding','Play a game of pickleball or search for the Geocache I have hidden here!', 'A summertime favorite for swimming and paddleboarding','Excellent Bahn Mi and super friendly service!','They have possibly my favorite donuts to date and sell out quickly!','A fun park with excellent views at sunset.'];
 
 function preload() {
-  img1 = loadImage('IMG_6112.PNG');
-  img2 = loadImage('IMG_7607.JPG');
-    img3 = loadImage('IMG_9696.JPG');
+  img1 = loadImage('libraries/IMG_6112.PNG');
+  img2 = loadImage('libraries/IMG_7607.JPG');
+    img3 = loadImage('libraries/IMG_9696.JPG');
 
-    img4 = loadImage('numbat.JPG');
+    img4 = loadImage('libraries/numbat.JPG');
 
 
   
