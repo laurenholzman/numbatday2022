@@ -1,20 +1,20 @@
 let img;
 let img2;
 var value = 0;
-var dim = 600;
+var dim = 1000;
 var value2 = 0;
 var rad = 30;
 let current;
 
-var places = [[350,197],[196,262]];
+var places = [[350/600*dim,197/600*dim],[196/600*dim,262/600*dim]];
 var descriptions = ['This dude is really having a good time.','It is in fact her 22nd birthday.'];
 
 function preload() {
-  img1 = loadImage('libraries/IMG_6112.PNG');
-  img4 = loadImage('libraries/IMG_7607.jpg');
-    img3 = loadImage('libraries/IMG_9696.jpg');
+  img1 = loadImage('IMG_6112.PNG');
+  img4 = loadImage('IMG_7607.jpg');
+    img3 = loadImage('IMG_9696.jpg');
 
-    img2 = loadImage('libraries/numbat.jpg');
+    img2 = loadImage('numbat.jpg');
 
 
   
@@ -61,12 +61,12 @@ function mouseReleased() {
 var resize = 2;
 function draw() {
   background(50)
-  image(img2,dim/3,dim/2.5,119*3,159*3)
+  image(img2,dim/3,dim/2.5,119*3/600*dim,159*3/600*dim)
   
-  textSize(12);
+  textSize(12/600*dim);
   fill(119,20,50);
- text('(press the left arrow, I dare you. you will NOT be disappointed)',50,550,500,200)
-   textSize(42);
+ text('(press the left arrow, I dare you. you will NOT be disappointed)',50/600*dim,550/600*dim,500/600*dim,200/600*dim)
+   textSize(42/600*dim);
 
   text('Happy Birthday to the best numbat of them all!',2*dim/3,dim/10-10,dim/3)
   if (value) {
