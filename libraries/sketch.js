@@ -3,18 +3,18 @@ let img2;
 var value = 0;
 var dim = 600;
 var value2 = 0;
-var rad = 10;
+var rad = 30;
 let current;
 
-//var places = [[208,37],[198,54],[240,106],[229,124],[316,128],[231,205],[249,328],[234,445]];
-//var descriptions = ['A muddy field that is redeemed by the adjacent dog park.','The best place for cheap coffee.','The best part for dangerously fast sledding','Play a game of pickleball or search for the Geocache I have hidden here!', 'A summertime favorite for swimming and paddleboarding','Excellent Bahn Mi and super friendly service!','They have possibly my favorite donuts to date and sell out quickly!','A fun park with excellent views at sunset.'];
+var places = [[350,197],[196,262]];
+var descriptions = ['This dude is really having a good time.','It is in fact her 22nd birthday.'];
 
 function preload() {
-  img1 = loadImage('libraries/IMG_6112.PNG');
-  img2 = loadImage('libraries/IMG_7607.JPG');
-    img3 = loadImage('libraries/IMG_9696.JPG');
+  img1 = loadImage('IMG_6112.PNG');
+  img4 = loadImage('IMG_7607.jpg');
+    img3 = loadImage('IMG_9696.jpg');
 
-    img4 = loadImage('libraries/numbat.JPG');
+    img2 = loadImage('numbat.jpg');
 
 
   
@@ -41,7 +41,7 @@ function keyReleased() {
 function mousePressed() {
   for (let i = 0; i < places.length; i++) {
     current = places[i];
-   // print(current[1],current[2], current[1]+rad,current[1]-rad,current[2]+rad,current[2]-rad)
+   console.log(mouseX,mouseY)
     var p1 = mouseX<current[0]+rad;
     var p2 = mouseX > current[0]-rad;
     var p3 = mouseY<current[1]+rad ;
@@ -68,7 +68,7 @@ function draw() {
  text('(press the left arrow, I dare you. you will NOT be disappointed)',50,550,500,200)
    textSize(42);
 
-  text('Happy Birthday to the best numbat of them all!',2*dim/3,dim/10,dim/3)
+  text('Happy Birthday to the best numbat of them all!',2*dim/3,dim/10-10,dim/3)
   if (value) {
   image(img1, mouseX, mouseY,75*resize,135*resize);
   }
