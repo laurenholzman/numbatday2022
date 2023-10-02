@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <title>Leaflet Point Layer</title>
+</head>
+       <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        #map-container {
+          position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+        }
+
+        #map {
+            position: absolute;
+            top:0;
+            width:100%;
+            height:80%
+        }
+
+        #control-container {
+            position: absolute;
+            top: 60px;
+            left: 10px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+          border: 1px solid #ccc;
+        }
+
+        .select-label {
+            margin-right: 10px;
+        }
+
+        select {
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+      #legend-container {
+        position: absolute;
+        bottom: 60px;
+        right: 10px;
+        background-color: rgba(255, 255, 255, 0.7);
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column; /* Display items in a column layout */
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+        text-align:left
+    }
+
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        margin-right: 5px;
+    }
+
+    .legend-label {
+        white-space: nowrap; /* Prevent labels from wrapping */
+        padding-left: 4px
+    }
+
+    .legend-header {
+        width:100%;
+        text-align:center;
+        font-weight: bold;
+        margin-top: 5px;
+        margin-bottom: 10px; /* Separate headers with more margin */
+    }
+    .pie {
+  width: 20px; /* Adjust the size as needed */
+  height: 20px; /* Adjust the size as needed */
+  border-radius: 50%; /* Create a circular shape */
+  
+}
+    .pie2 {
+  width: 20px; /* Adjust the size as needed */
+  height: 20px; /* Adjust the size as needed */
+  border-radius: 50%; /* Create a circular shape */
+  clip-path: polygon(0 0, 100% 0, 50% 100%); /* Define the shape of the 1/6th circle */
+}
+.circle {
+  width: 20px; /* Set the width and height to control the size of the circle */
+  height: 20px;
+  border: 2px;
+  border-radius: 50%; /* Make it a circle by setting the border-radius to 50% */
+}
+         
+         #grove,#cluster {
+  position: absolute;
+  height:8%;
+  left: 0px;
+  text-align:center;
+  justify-content:center;
+  /* border: 1px solid #ccc;*/
+  border-radius: 5px;
+  padding-left: 5px;
+  padding-right:5px;
+  z-index: 1000; /* Ensure it's above other elements */
+  min-width:200px
+
+}
+         #grove {
+           top: 81%;
+         }
+         
+         
+         #cluster {
+           top: 90%;
+         }
+         
+         #toggles {
+           width: 19%;
+         }
+         #raster-legend,#pie-legend,#border-legend {
+           justify-content: center;
+          align-items: center;
+           padding-left:1%;
+           top:81%;
+         position: absolute;
+  height:20%;
+  width:27%;
+  text-align:center;
+  /* border: 1px solid #ccc;*/
+  border-radius: 0px;
+  padding-left: 5px;
+  padding-right:5px;
+  z-index: 1000; /* Ensure it's above other elements */    
+         }
+         #raster-legend {
+           left:19%
+         } 
+         #pie-legend {
+          left:46%
+         }  
+         #border-legend {
+           left:73%
+         } 
+         #legends {
+           position: absolute;
+           top:81%;
+           align:right;
+           left:19%;
+           width:81%;
+          min-width:600px
+
+         }
+button {
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+button.active {
+  background-color: #0074D9;
+  color: white;
+  border: none;
+}
+
+    </style>
+
+<body>
+    <div id="map-container">
+        <div id="map"></div>
+        
+      
+       
+         
+    </div>
+  <div id="toggles">
+  <div id="grove">
+    <span><b>Grove</b> </span>
+  <div id="toggle-button">
+  <button id="giant-forest-button" class="active">Giant Forest</button>
+  <button id="mariposa-button">Mariposa</button>
+</div>
+  </div>
+    <div id="cluster">
+      <span><b>Cluster Data Source</b> </span>
+  <div class="toggle-button">
+  <button id="all-button" class="active">All Groves</button>
+  <button id="single-button">Single Grove</button>
+</div>
+  </div>
+    
+  </div>
+  <div id="legends">
+  <div id="raster-legend">
+  </div>
+  <div id="pie-legend">
+  </div>
+  <div id="border-legend">
+  </div>
+  </div>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+   <script src="canvasicon.js"></script>
+  <script type="text/javascript" src="leaflet-piechart.js"></script>
+    <script src="https://unpkg.com/georaster"></script>
+    <script src="https://unpkg.com/georaster-layer-for-leaflet"></script>
+    <script src="https://unpkg.com/chroma-js"></script>
+     <link rel="stylesheet" href="https://unpkg.com/leaflet-scalebar@1.1.0/dist/leaflet.scalebar.min.css"/>
+  
+    <script>
+    //colors 
+      var drycolor = '#dce775'
+      var mesiccolor = '#76B841'
+      var wetcolor = '#078609'
+      var othercolor = 'orange'
+      var stroke='black'
+      //for if zoomed in or out
+      var zoomMP = '_p'
+      var zoomThreshold = 15;
+      var groveName = "gf"
+      var clusterType = "_all"
+      var curRaster = "gf_all"
+  // Initialize the map
+
+var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap',
+    zIndex: -1 // Set zIndex to -1
+});
+
+var osmHOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors, Tiles style by Humanitarian OpenStreetMap Team hosted by OpenStreetMap France',
+    zIndex: -1 // Set zIndex to -1
+});
+var USGS_USImageryTopo = L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer/tile/{z}/{y}/{x}', {
+	maxZoom: 20,
+	attribution: 'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>'
+});
+var CartoDB_Positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+	subdomains: 'abcd',
+	maxZoom: 20
+});
+var Esri_WorldGrayCanvas = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+	attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+	maxZoom: 16
+});
+
+var map = L.map('map', {
+    center: [36.56727099,	-118.7440642],
+    zoom: 14,
+
+});
+      
+var rasterLayer = L.layerGroup().addTo(map);
+rasterLayer.setZIndex(1000); // Set a higher zIndex value
+CartoDB_Positron.addTo(map)
+
+      
+//base maps
+var baseMaps = {
+    "OpenStreetMap": osm,
+    "OpenStreetMap.HOT": osmHOT,
+    "USGS_USImageryTopo":USGS_USImageryTopo,
+    "CartoDB_Positron":CartoDB_Positron,
+    "Esri_WorldGrayCanvas":Esri_WorldGrayCanvas
+};
+      
+
+
+//scale bar
+ L.control.scale({ position: 'bottomright' }).addTo(map);
+
+// Initialize an empty point layer
+let pointLayer = L.layerGroup().addTo(map);
+pointLayer.setZIndex(100000); // Set a higher zIndex value
+
+// Create an object to store different point layers
+const pointLayers = {
+    gf_all_m: L.layerGroup(),
+    gf_single_m: L.layerGroup(),
+    mariposa_all_m: L.layerGroup(),
+    mariposa_single_m: L.layerGroup(),
+    gf_all_p: L.layerGroup(),
+    gf_single_p: L.layerGroup(),
+    mariposa_all_p: L.layerGroup(),
+    mariposa_single_p: L.layerGroup(),
+};
+      
+//let rasterLayer = L.layerGroup().addTo(map);
+
+// Create an object to store different point layers
+const rasterLayers = {
+    gf_all: L.layerGroup(),
+    gf_single: L.layerGroup(),
+    mariposa_all: L.layerGroup(),
+    mariposa_single: L.layerGroup(),
+ 
+};
+      
+//Layer control
+var layerControl = L.control.layers(baseMaps, {
+  "Cluster Result": rasterLayer,
+  "Tree Points": pointLayer
+}).addTo(map);
+    
+// Function to update the point layer based on the selected layer
+function updatePointLayer(selectedLayer) {
+   const pointName = selectedLayer.concat(zoomMP)
+  
+    // Clear the current point layer
+    pointLayer.clearLayers();
+
+    // Add the selected point layer to the map
+    pointLayers[pointName].addTo(pointLayer);
+   
+
+  
+}
+    
+
+function updateRasterLayer(selectedLayer) { 
+  
+    // Clear the current raster layer
+    rasterLayer.clearLayers();
+    
+
+    // Add the selected point layer to the map
+    rasterLayers[selectedLayer].addTo(rasterLayer);
+    
+ map.fitBounds(rasterLayers[selectedLayer].getBounds());
+
+}
+
+
+// Function to change the symbology of the point layer
+
+
+
+
+loadRasterLayer('https://thehellomartian.github.io/numbatday2022/gf_hand_kmeans_result.tif','gf_single');  addGeoJSONLayer("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/gf_points_2.geojson", 'gf_all_p');
+addGeoJSONLayer("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/gf_points_2.geojson", 'gf_single_p');
+      addGeoJSONLayer("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/mariposa_points.geojson", 'mariposa_all_p');
+      addGeoJSONLayer("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/mariposa_points.geojson", 'mariposa_single_p');
+addGeoJSONMarker("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/gf_points.geojson", 'gf_all_m');
+addGeoJSONMarker("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/gf_points.geojson", 'gf_single_m');
+
+ addGeoJSONMarker("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/mariposa_points.geojson", 'mariposa_all_m');
+      addGeoJSONMarker("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/mariposa_points.geojson", 'mariposa_single_m');
+loadRasterLayer('https://thehellomartian.github.io/numbatday2022/gf_hand_kmeans_wgs.tif','gf_all');
+// Initial update with default values
+
+
+
+
+
+
+function loadRasters(callback) {
+  var rasterInitial = [
+  ['https://thehellomartian.github.io/numbatday2022/gf_hand_kmeans_result.tif','gf_single'],
+  ['https://thehellomartian.github.io/numbatday2022/gf_buff_kmeans_all_result2.tif','gf_all'],
+     ['https://thehellomartian.github.io/numbatday2022/mariposa_wbd_kmeans_result2.tif','mariposa_single'],
+  ['https://thehellomartian.github.io/numbatday2022/mariposa_wbd_kmeans_all_result2.tif','mariposa_all']
+]
+for (i in rasterInitial) {
+  
+  loadRasterLayer(rasterInitial[i][0],rasterInitial[i][1])
+}
+
+  setTimeout(function () {
+   
+    callback(); // Call the callback function to trigger the next action
+  }, 2000);
+}
+
+function loadInitial() {
+  
+  updatePointLayer(curRaster)      
+updateRasterLayer(curRaster)
+
+}
+
+loadRasters(loadInitial);
+      
+// Function to fetch and add GeoJSON data as a layer
+function addGeoJSONLayer(url, layerName) {
+    fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+             
+            const geoJsonLayer = L.geoJSON(data, {
+             
+                pointToLayer: function (feature, latlng,layer) {
+                  //popup
+                    var popupContent = "<h3>" + feature.properties.tree + "</h3>";
+                  /*
+        popupContent += "<p>Attribute 1: " + feature.properties.attribute1 + "</p>";
+        popupContent += "<p>Attribute 2: " + feature.properties.attribute2 + "</p>";
+        */
+        // Add more attributes as needed
+
+       // layer.bindPopup(popupContent);
+               //color outside by kmeans actual cluster
+                  if (feature.properties.hydrology=="Dry") {
+                   stroke= drycolor  
+                  } else if (feature.properties.hydrology=="Mesic"){
+                   stroke= mesiccolor
+
+                  } else {
+                    stroke=wetcolor
+                  }
+                  
+    
+            return L.piechartMarker(latlng,
+          {
+              radius: 15,
+              data: [
+                //color inside by kmeans focal values
+                  { name: '1', value: feature.properties.focal_2, style: { fillStyle: drycolor, strokeStyle: stroke, lineWidth: 5 }  },
+                  { name: '2', value: feature.properties.focal_1, style: { fillStyle: othercolor, strokeStyle: stroke, lineWidth: 5 }},
+
+                  { name: '3', value: feature.properties.focal_3, style: { fillStyle: wetcolor, strokeStyle: stroke, lineWidth: 5 } },
+                  
+              ],
+              
+          })
+                },
+              
+            });
+            pointLayers[layerName] = geoJsonLayer;
+            
+        })
+        .catch((error) => {
+            console.error('Error fetching GeoJSON:', error);
+        });
+}
+
+function addGeoJSONMarker(url, layerName) {
+    fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+             
+            const geoJsonLayer = L.geoJSON(data, {
+             
+                pointToLayer: function (feature, latlng) {
+               //color outside by kmeans actual cluster
+                  if (feature.properties.hydrology=="Dry") {
+                   stroke= drycolor  
+                  } else if (feature.properties.hydrology=="Mesic"){
+                   stroke= mesiccolor
+
+                  } else {
+                    stroke=wetcolor
+                  }
+                 
+                      if (feature.properties.kmeans==2) {
+                   fillCo= drycolor  
+                  } else if (feature.properties.kmeans==3){
+                   fillCo= wetcolor
+
+                  } else {
+                    fillCo=othercolor
+                  }
+          return L.piechartMarker(latlng,
+          {
+              radius: 10,
+              data: [
+                //color inside by kmeans focal values
+                  { name: '1', value: feature.properties.gf_hand_kmeans_result, style: { fillStyle: fillCo, strokeStyle: stroke, lineWidth: 5 }  },
+                  
+                  
+              ],
+              
+          })
+    
+           
+                },
+            });
+            pointLayers[layerName] = geoJsonLayer;
+            
+        })
+        .catch((error) => {
+            console.error('Error fetching GeoJSON:', error);
+        });
+}
+//Function to change rasters
+ function loadRasterLayer(url,layerName) {
+
+        fetch(url)
+          .then(response => response.arrayBuffer())
+          .then(arrayBuffer => {
+            parseGeoraster(arrayBuffer).then(georaster => {
+              const min = georaster.mins[0];
+              const max = georaster.maxs[0];
+              const range = georaster.ranges[0];
+             
+              /*
+              if (typeof rasterLayer !== 'undefined') {
+                map.removeLayer(rasterLayer);
+              }
+              */
+              rasterLayer1 = new GeoRasterLayer({
+                georaster: georaster,
+                opacity: 0.5,
+                zIndex:1000,
+                pixelValuesToColorFn: function(pixelValues) {
+                  var pixelValue = pixelValues[0];
+                  if (pixelValue === 0) {return null} else if (pixelValue===1) {return drycolor} else if (pixelValue=== 2) {return mesiccolor} else {return wetcolor}
+                  
+                  
+                },
+                resolution: 256
+              });
+              rasterLayers[layerName] = rasterLayer1;
+              //rasterLayer.addTo(map);
+              
+              //scale bar
+             
+            });
+          });
+        
+         //updateLegend();
+      }
+
+
+
+//legends
+
+  
+ var rasterLegend = `
+  <div class="legend-title">
+    <strong>K-means Clusters</strong>
+  </div>
+  <div class="legend-item">
+    <span class="legend-color" style="background-color: ${drycolor};"></span>
+    <span class="legend-label">Cluster 1 (dry)</span>
+  </div>
+
+  <div class="legend-item">
+    <span class="legend-color" style="background-color: ${othercolor};"></span>
+    <span class="legend-label">Cluster 2 (other)</span>
+  </div>
+<div class="legend-item">
+    <span class="legend-color" style="background-color: ${wetcolor};"></span>
+    <span class="legend-label">Cluster 3 (wet)</span>
+  </div>`
+ document.getElementById('raster-legend').innerHTML = rasterLegend
+      
+  var borderLegend = `<div class="legend-title">
+    <strong>Hydrological Classification</strong>
+  </div>
+  <div class="legend-item">
+    <span class="circle" style="border: 2px solid ${drycolor};"></span>
+    <span class="legend-label"> Dry</span>
+  </div>
+
+  <div class="legend-item">
+    <span class="circle" style="border: 2px solid${mesiccolor};"></span>
+    <span class="legend-label"> Mesic</span>
+  </div>
+<div class="legend-item">
+    <span class="circle" style="border: 2px solid ${wetcolor};"></span>
+    <span class="legend-label"> Wet</span>
+  </div>`
+   document.getElementById('border-legend').innerHTML = borderLegend
+   var markerLegend =  `<div class="legend-title">
+    <strong> K-means Cluster Value</strong>
+  </div>
+  <div class="legend-item">
+    <span class="pie" style="background-color: ${drycolor};"></span>
+    <span class="legend-label">Cluster 1 (dry)</span>
+  </div>
+
+  <div class="legend-item">
+    <span class="pie" style="background-color: ${othercolor};"></span>
+    <span class="legend-label">Cluster 2 (other)</span>
+  </div>
+<div class="legend-item">
+    <span class="pie" style="background-color: ${wetcolor};"></span>
+    <span class="legend-label">Cluster 3 (wet)</span>
+  </div>`;  
+  
+  var pieLegend = `<div class="legend-title">
+    <strong>Neighborhood Fractional Cluster Membership</strong>
+  </div>
+  <div class="legend-item">
+    <span class="pie2" style="background-color: ${drycolor};"></span>
+    <span class="legend-label">Cluster 1 (dry)</span>
+  </div>
+
+  <div class="legend-item">
+    <span class="pie2" style="background-color: ${othercolor};"></span>
+    <span class="legend-label">Cluster 2 (other)</span>
+  </div>
+<div class="legend-item">
+    <span class="pie2" style="background-color: ${wetcolor};"></span>
+    <span class="legend-label">Cluster 3 (wet)</span>
+  </div>`;
+      document.getElementById('pie-legend').innerHTML = pieLegend
+      
+// Add an event listener for the "Giant Forest" button
+document.getElementById("giant-forest-button").addEventListener("click", function () {
+    document.getElementById("giant-forest-button").classList.add("active");
+  document.getElementById("mariposa-button").classList.remove("active");
+  groveName="gf"
+  curRaster = groveName+clusterType
+  updateRasterLayer(curRaster)
+  updatePointLayer(curRaster)
+
+});
+
+// Add an event listener for the "Mariposa" button
+document.getElementById("mariposa-button").addEventListener("click", function () {
+    document.getElementById("mariposa-button").classList.add("active");
+  document.getElementById("giant-forest-button").classList.remove("active");
+   groveName="mariposa"
+  curRaster = groveName+clusterType
+  updateRasterLayer(curRaster)
+  updatePointLayer(curRaster)
+
+});
+      
+// Add an event listener for the "All Groves" button
+document.getElementById("all-button").addEventListener("click", function () {
+   document.getElementById("all-button").classList.add("active");
+  document.getElementById("single-button").classList.remove("active");
+   clusterType="_all"
+  curRaster = groveName+clusterType
+  updateRasterLayer(curRaster)
+  updatePointLayer(curRaster)
+ 
+});
+
+// Add an event listener for the "Single" button
+document.getElementById("single-button").addEventListener("click", function () {
+  document.getElementById("single-button").classList.add("active");
+  document.getElementById("all-button").classList.remove("active");
+
+ clusterType="_single"
+  curRaster = groveName+clusterType
+
+  updateRasterLayer(curRaster)
+  updatePointLayer(curRaster)
+  
+});
+      
+// Add a zoom listener to the map
+map.on('zoomend', function () {
+  var currentZoom = map.getZoom();
+
+  // Check if the current zoom level is below the threshold
+  if (currentZoom < zoomThreshold) {
+    // Perform your desired actions when the zoom level is below the threshold
+   
+    zoomMP = "_m";
+    updatePointLayer(curRaster)
+     document.getElementById('pie-legend').innerHTML = markerLegend
+  } else {
+    
+    zoomMP = "_p"
+    updatePointLayer(curRaster)
+     document.getElementById('pie-legend').innerHTML = pieLegend
+  }
+});
+</script> 
+</body>
+</html>
