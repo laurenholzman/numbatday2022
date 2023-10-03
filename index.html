@@ -102,9 +102,9 @@
   clip-path: polygon(0 0, 100% 0, 50% 100%); /* Define the shape of the 1/6th circle */
 }
 .circle {
-  width: 20px; /* Set the width and height to control the size of the circle */
-  height: 20px;
-  border: 2px;
+  width: 16px; /* Set the width and height to control the size of the circle */
+  height: 16px;
+  border: 1px;
   border-radius: 50%; /* Make it a circle by setting the border-radius to 50% */
 }
          
@@ -141,7 +141,7 @@
            top:81%;
          position: absolute;
   height:20%;
-  width:27%;
+  width:26%;
   text-align:center;
   /* border: 1px solid #ccc;*/
   border-radius: 0px;
@@ -223,9 +223,16 @@ button.active {
   
     <script>
     //colors 
-      var drycolor = '#dce775'
-      var mesiccolor = '#76B841'
-      var wetcolor = '#078609'
+      var drycolor = '#FFFAD2'
+      
+      //cbb9aa
+     // dce775
+      var mesiccolor = '#6C915C'
+      //76B841
+      var wetcolor = '#056608'
+      //4C9A2A
+      //006B3C
+      //078609
       var othercolor = 'orange'
       var stroke='black'
       //for if zoomed in or out
@@ -350,7 +357,8 @@ function updateRasterLayer(selectedLayer) {
 
 
 
-  addGeoJSONLayer("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/gf_points_2.geojson", 'gf_all_p');
+
+addGeoJSONLayer("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/gf_points_2.geojson", 'gf_all_p');
 addGeoJSONLayer("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/gf_points_2.geojson", 'gf_single_p');
       addGeoJSONLayer("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/mariposa_points.geojson", 'mariposa_all_p');
       addGeoJSONLayer("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/mariposa_points.geojson", 'mariposa_single_p');
@@ -359,6 +367,7 @@ addGeoJSONMarker("https://raw.githubusercontent.com/thehellomartian/numbatday202
 
  addGeoJSONMarker("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/mariposa_points.geojson", 'mariposa_all_m');
       addGeoJSONMarker("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/mariposa_points.geojson", 'mariposa_single_m');
+
 // Initial update with default values
 
 
@@ -369,9 +378,9 @@ addGeoJSONMarker("https://raw.githubusercontent.com/thehellomartian/numbatday202
 function loadRasters(callback) {
   var rasterInitial = [
   ['https://thehellomartian.github.io/numbatday2022/gf_hand_kmeans_result.tif','gf_single'],
-  ['https://thehellomartian.github.io/numbatday2022/gf_buff_kmeans_all_result2.tif','gf_all'],
-     ['https://thehellomartian.github.io/numbatday2022/mariposa_wbd_kmeans_result2.tif','mariposa_single'],
-  ['https://thehellomartian.github.io/numbatday2022/mariposa_wbd_kmeans_all_result2.tif','mariposa_all']
+  ['https://thehellomartian.github.io/numbatday2022/gf_hand_kmeans_all_result2.tif','gf_all'],
+     ['https://thehellomartian.github.io/numbatday2022/mariposa_hand_kmeans_result.tif','mariposa_single'],
+  ['https://thehellomartian.github.io/numbatday2022/mariposa_hand_kmeans_all_result2.tif','mariposa_all']
 ]
 for (i in rasterInitial) {
   
@@ -477,7 +486,7 @@ function addGeoJSONMarker(url, layerName) {
               radius: 10,
               data: [
                 //color inside by kmeans focal values
-                  { name: '1', value: feature.properties.gf_hand_kmeans_result, style: { fillStyle: fillCo, strokeStyle: stroke, lineWidth: 5 }  },
+                  { name: '1', value: feature.properties.kmeans, style: { fillStyle: fillCo, strokeStyle: stroke, lineWidth: 5 }  },
                   
                   
               ],
@@ -516,7 +525,7 @@ function addGeoJSONMarker(url, layerName) {
                 zIndex:1000,
                 pixelValuesToColorFn: function(pixelValues) {
                   var pixelValue = pixelValues[0];
-                  if (pixelValue === 0) {return null} else if (pixelValue===1) {return drycolor} else if (pixelValue=== 2) {return mesiccolor} else {return wetcolor}
+                  if (pixelValue === 0) {return null} else if (pixelValue===1) {return othercolor} else if (pixelValue=== 2) {return drycolor} else {return wetcolor}
                   
                   
                 },
@@ -558,24 +567,24 @@ function addGeoJSONMarker(url, layerName) {
  document.getElementById('raster-legend').innerHTML = rasterLegend
       
   var borderLegend = `<div class="legend-title">
-    <strong>Hydrological Classification</strong>
+    <strong>Tree Hydrological Classification</strong>
   </div>
   <div class="legend-item">
-    <span class="circle" style="border: 2px solid ${drycolor};"></span>
+    <span class="circle" style="border: 4px solid ${drycolor};"></span>
     <span class="legend-label"> Dry</span>
   </div>
 
   <div class="legend-item">
-    <span class="circle" style="border: 2px solid${mesiccolor};"></span>
+    <span class="circle" style="border: 4px solid${mesiccolor};"></span>
     <span class="legend-label"> Mesic</span>
   </div>
 <div class="legend-item">
-    <span class="circle" style="border: 2px solid ${wetcolor};"></span>
+    <span class="circle" style="border: 4px solid ${wetcolor};"></span>
     <span class="legend-label"> Wet</span>
   </div>`
    document.getElementById('border-legend').innerHTML = borderLegend
    var markerLegend =  `<div class="legend-title">
-    <strong> K-means Cluster Value</strong>
+    <strong> Tree K-means Cluster Value</strong>
   </div>
   <div class="legend-item">
     <span class="pie" style="background-color: ${drycolor};"></span>
