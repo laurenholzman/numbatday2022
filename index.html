@@ -104,7 +104,7 @@
 .circle {
   width: 16px; /* Set the width and height to control the size of the circle */
   height: 16px;
-  border: 1px;
+  border: 2px;
   border-radius: 50%; /* Make it a circle by setting the border-radius to 50% */
 }
          
@@ -141,7 +141,7 @@
            top:81%;
          position: absolute;
   height:20%;
-  width:26%;
+  width:27%;
   text-align:center;
   /* border: 1px solid #ccc;*/
   border-radius: 0px;
@@ -271,6 +271,24 @@ var map = L.map('map', {
     zoom: 14,
 
 });
+    hi = 0;
+var lat = map.on('click', function(e) {
+    console.log(e.latlng); 
+hi = e.latlng;
+  var marker = L.marker([36.56727099,	-118.7440642]).bindPopup("YoYo/").addTo(map);
+var pieMarker = L.piechartMarker({lat:36.56727099,lng:-118.7640642}, {
+              radius: 10,
+              data: [
+                //color inside by kmeans focal values
+                  { name: '1', value: 3, style: { fillStyle: 'orange', strokeStyle: 'green', lineWidth: 5 }  },
+                  
+                  
+              ],
+              
+          }).bindPopup("hi").addTo(map)
+
+pieMarker.bindPopup("Yo/")});
+      
       
 var rasterLayer = L.layerGroup().addTo(map);
 rasterLayer.setZIndex(1000); // Set a higher zIndex value
@@ -292,20 +310,22 @@ var baseMaps = {
  L.control.scale({ position: 'bottomright' }).addTo(map);
 
 // Initialize an empty point layer
-let pointLayer = L.layerGroup().addTo(map);
+let pointLayer = L.featureGroup().bindPopup('Hello world!').addTo(map);
 pointLayer.setZIndex(100000); // Set a higher zIndex value
 
 // Create an object to store different point layers
 const pointLayers = {
-    gf_all_m: L.layerGroup(),
-    gf_single_m: L.layerGroup(),
-    mariposa_all_m: L.layerGroup(),
-    mariposa_single_m: L.layerGroup(),
-    gf_all_p: L.layerGroup(),
-    gf_single_p: L.layerGroup(),
-    mariposa_all_p: L.layerGroup(),
-    mariposa_single_p: L.layerGroup(),
+    gf_all_m: L.featureGroup(),
+    gf_single_m: L.featureGroup(),
+    mariposa_all_m: L.featureGroup(),
+    mariposa_single_m: L.featureGroup(),
+    gf_all_p: L.featureGroup(),
+    gf_single_p: L.featureGroup(),
+    mariposa_all_p: L.featureGroup(),
+    mariposa_single_p: L.featureGroup(),
 };
+
+const invisibleLayers = pointLayers;
       
 //let rasterLayer = L.layerGroup().addTo(map);
 
@@ -358,15 +378,16 @@ function updateRasterLayer(selectedLayer) {
 
 
 
-addGeoJSONLayer("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/gf_points_2.geojson", 'gf_all_p');
+
+  addGeoJSONLayer("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/gf_all_points.geojson", 'gf_all_p');
 addGeoJSONLayer("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/gf_points_2.geojson", 'gf_single_p');
-      addGeoJSONLayer("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/mariposa_points.geojson", 'mariposa_all_p');
-      addGeoJSONLayer("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/mariposa_points.geojson", 'mariposa_single_p');
-addGeoJSONMarker("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/gf_points_2.geojson", 'gf_all_m');
+      addGeoJSONLayer("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/mariposa_all_points.geojson", 'mariposa_all_p');
+      addGeoJSONLayer("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/Mariposa_single_points.geojson", 'mariposa_single_p');
+addGeoJSONMarker("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/gf_all_points.geojson", 'gf_all_m');
 addGeoJSONMarker("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/gf_points_2.geojson", 'gf_single_m');
 
- addGeoJSONMarker("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/mariposa_points.geojson", 'mariposa_all_m');
-      addGeoJSONMarker("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/mariposa_points.geojson", 'mariposa_single_m');
+ addGeoJSONMarker("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/mariposa_all_points.geojson", 'mariposa_all_m');
+      addGeoJSONMarker("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/Mariposa_single_points.geojson", 'mariposa_single_m');
 
 // Initial update with default values
 
@@ -378,7 +399,8 @@ addGeoJSONMarker("https://raw.githubusercontent.com/thehellomartian/numbatday202
 function loadRasters(callback) {
   var rasterInitial = [
   ['https://thehellomartian.github.io/numbatday2022/gf_hand_kmeans_result.tif','gf_single'],
-  ['https://thehellomartian.github.io/numbatday2022/gf_hand_kmeans_all_result2.tif','gf_all'],
+
+['https://thehellomartian.github.io/numbatday2022/gf_hand_kmeans_all_result2.tif','gf_all'],
      ['https://thehellomartian.github.io/numbatday2022/mariposa_hand_kmeans_result.tif','mariposa_single'],
   ['https://thehellomartian.github.io/numbatday2022/mariposa_hand_kmeans_all_result2.tif','mariposa_all']
 ]
@@ -443,11 +465,24 @@ function addGeoJSONLayer(url, layerName) {
                   
               ],
               
-          })
+          }).bindPopup('Hello world!')
+                },
+              
+            })
+
+  /*
+       const invisibleGeoJson = L.geoJSON(data, {
+             
+                pointToLayer: function (feature, latlng,layer) {
+                  console.log([latlng.lat,latlng.lng])
+            return L.Marker([latlng.lat,latlng.lng],
+          ).bindPopup('Hello world!')
                 },
               
             });
+*/
             pointLayers[layerName] = geoJsonLayer;
+            //invisibleLayers[layerName] = invisibleGeoJson;
             
         })
         .catch((error) => {
@@ -455,6 +490,7 @@ function addGeoJSONLayer(url, layerName) {
         });
 }
 
+     
 function addGeoJSONMarker(url, layerName) {
     fetch(url)
         .then((response) => response.json())
@@ -505,7 +541,23 @@ function addGeoJSONMarker(url, layerName) {
 }
 //Function to change rasters
  function loadRasterLayer(url,layerName) {
-
+      var drynum=0;
+      var othernum=0;
+      var wetnum=0;
+   if (layerName== "gf_single" ) {
+     drynum = 2;
+     othernum = 1;
+     wetnum = 3;
+     
+   } else if (layerName=="mariposa_single") {
+     drynum = 1;
+     othernum = 3;
+     wetnum = 2;
+   } else {
+     drynum = 1;
+     othernum =2;
+     wetnum=3;
+   }
         fetch(url)
           .then(response => response.arrayBuffer())
           .then(arrayBuffer => {
@@ -525,7 +577,7 @@ function addGeoJSONMarker(url, layerName) {
                 zIndex:1000,
                 pixelValuesToColorFn: function(pixelValues) {
                   var pixelValue = pixelValues[0];
-                  if (pixelValue === 0) {return null} else if (pixelValue===1) {return othercolor} else if (pixelValue=== 2) {return drycolor} else {return wetcolor}
+                  if (pixelValue === 0) {return null} else if (pixelValue===othernum) {return othercolor} else if (pixelValue=== drynum) {return drycolor} else {return wetcolor}
                   
                   
                 },
@@ -567,24 +619,24 @@ function addGeoJSONMarker(url, layerName) {
  document.getElementById('raster-legend').innerHTML = rasterLegend
       
   var borderLegend = `<div class="legend-title">
-    <strong>Tree Hydrological Classification</strong>
+    <strong>Hydrological Classification</strong>
   </div>
   <div class="legend-item">
-    <span class="circle" style="border: 4px solid ${drycolor};"></span>
+    <span class="circle" style="border: 6px solid ${drycolor};"></span>
     <span class="legend-label"> Dry</span>
   </div>
 
   <div class="legend-item">
-    <span class="circle" style="border: 4px solid${mesiccolor};"></span>
+    <span class="circle" style="border: 6px solid${mesiccolor};"></span>
     <span class="legend-label"> Mesic</span>
   </div>
 <div class="legend-item">
-    <span class="circle" style="border: 4px solid ${wetcolor};"></span>
+    <span class="circle" style="border: 6px solid ${wetcolor};"></span>
     <span class="legend-label"> Wet</span>
   </div>`
    document.getElementById('border-legend').innerHTML = borderLegend
    var markerLegend =  `<div class="legend-title">
-    <strong> Tree K-means Cluster Value</strong>
+    <strong> K-means Cluster Value</strong>
   </div>
   <div class="legend-item">
     <span class="pie" style="background-color: ${drycolor};"></span>
