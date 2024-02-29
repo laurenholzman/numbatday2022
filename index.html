@@ -193,7 +193,7 @@ button.active {
     <span><b>Grove</b> </span>
   <div id="toggle-button">
   <button id="giant-forest-button" class="active">Giant Forest</button>
-  <button id="mariposa-button">Mariposa</button>
+  <button id="mariposa-button">All Groves of Interest</button>
 </div>
   </div>
     <div id="cluster">
@@ -220,6 +220,8 @@ button.active {
     <script src="https://unpkg.com/georaster-layer-for-leaflet"></script>
     <script src="https://unpkg.com/chroma-js"></script>
      <link rel="stylesheet" href="https://unpkg.com/leaflet-scalebar@1.1.0/dist/leaflet.scalebar.min.css"/>
+         <script src="https://unpkg.com/leaflet-geosearch/dist/geosearch.min.js"></script>
+
   
     <script>
     //colors 
@@ -306,9 +308,15 @@ var baseMaps = {
       
 
 
+      
+      
 //scale bar
- L.control.scale({ position: 'bottomright' }).addTo(map);
-
+L.control.scale({
+    position:'bottomright',
+    
+    maxWidth: 200,   // Set maximum width of the scale bar in pixels
+    updateWhenIdle: true   // Update the scale bar when the map is idle
+}).addTo(map);
 // Initialize an empty point layer
 let pointLayer = L.featureGroup().bindPopup('Hello world!').addTo(map);
 pointLayer.setZIndex(100000); // Set a higher zIndex value
@@ -379,11 +387,11 @@ function updateRasterLayer(selectedLayer) {
 
 
 
-  addGeoJSONLayer("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/gf_all_points.geojson", 'gf_all_p');
+  addGeoJSONLayer("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/gf_points_02282024.geojson", 'gf_all_p');
 addGeoJSONLayer("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/gf_points_2.geojson", 'gf_single_p');
       addGeoJSONLayer("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/mariposa_all_points.geojson", 'mariposa_all_p');
       addGeoJSONLayer("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/Mariposa_single_points.geojson", 'mariposa_single_p');
-addGeoJSONMarker("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/gf_all_points.geojson", 'gf_all_m');
+addGeoJSONMarker("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/gf_points_02282024.geojson", 'gf_all_m');
 addGeoJSONMarker("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/gf_points_2.geojson", 'gf_single_m');
 
  addGeoJSONMarker("https://raw.githubusercontent.com/thehellomartian/numbatday2022/main/mariposa_all_points.geojson", 'mariposa_all_m');
@@ -400,8 +408,9 @@ function loadRasters(callback) {
   var rasterInitial = [
   ['https://thehellomartian.github.io/numbatday2022/gf_hand_kmeans_result.tif','gf_single'],
 
-['https://thehellomartian.github.io/numbatday2022/gf_hand_kmeans_all_result2.tif','gf_all'],
-     ['https://thehellomartian.github.io/numbatday2022/mariposa_hand_kmeans_result.tif','mariposa_single'],
+['https://thehellomartian.github.io/numbatday2022/GF_02282024_derived_el_nohand.tif','gf_all'],
+    
+['https://thehellomartian.github.io/numbatday2022/mariposa_hand_kmeans_result.tif','mariposa_single'],
   ['https://thehellomartian.github.io/numbatday2022/mariposa_hand_kmeans_all_result2.tif','mariposa_all']
 ]
 for (i in rasterInitial) {
@@ -458,10 +467,10 @@ function addGeoJSONLayer(url, layerName) {
               radius: 15,
               data: [
                 //color inside by kmeans focal values
-                  { name: '1', value: feature.properties.focal_2, style: { fillStyle: drycolor, strokeStyle: stroke, lineWidth: 5 }  },
-                  { name: '2', value: feature.properties.focal_1, style: { fillStyle: othercolor, strokeStyle: stroke, lineWidth: 5 }},
+                  { name: '1', value: feature.properties.pie_3, style: { fillStyle: drycolor, strokeStyle: stroke, lineWidth: 5 }  },
+                  { name: '2', value: feature.properties.pie_2, style: { fillStyle: othercolor, strokeStyle: stroke, lineWidth: 5 }},
 
-                  { name: '3', value: feature.properties.focal_3, style: { fillStyle: wetcolor, strokeStyle: stroke, lineWidth: 5 } },
+                  { name: '3', value: feature.properties.pie_1, style: { fillStyle: wetcolor, strokeStyle: stroke, lineWidth: 5 } },
                   
               ],
               
@@ -553,7 +562,11 @@ function addGeoJSONMarker(url, layerName) {
      drynum = 1;
      othernum = 3;
      wetnum = 2;
-   } else {
+   }  else if (layerName=="gf_all") {
+     drynum = 3;
+     othernum = 2;
+     wetnum = 1;
+   }else {
      drynum = 1;
      othernum =2;
      wetnum=3;
@@ -577,7 +590,7 @@ function addGeoJSONMarker(url, layerName) {
                 zIndex:1000,
                 pixelValuesToColorFn: function(pixelValues) {
                   var pixelValue = pixelValues[0];
-                  if (pixelValue === 0) {return null} else if (pixelValue===othernum) {return othercolor} else if (pixelValue=== drynum) {return drycolor} else {return wetcolor}
+                  if (pixelValue === 0) {return null} else if (pixelValue===othernum) {return othercolor} else if (pixelValue=== drynum) {return drycolor} else if (pixelValue===wetnum){return wetcolor} else {return null}
                   
                   
                 },
